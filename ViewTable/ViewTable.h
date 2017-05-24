@@ -8,7 +8,7 @@ private:
 	KEY* keys;
 	VAL* values;
 	size_t s;//size
-	size_t used;//количество используемых эл
+	size_t used;
 
 public:
 	ViewTable(size_t size);
@@ -18,10 +18,21 @@ public:
 	{
 		for (size_t i = 0; i < s; i++)
 		{
-			if (keys[i] == KEY())
+			if (keys[i] == KEY() || arrKey[i] >= k)
 			{
-				keys[i] = k;
-				values[i] = v;
+				keys[used] = k;
+				values[used] = v;
+				
+				for (size_t x = i; i < used; i++)
+				{
+					KEY _k = arrKey[x];
+					VAL _v = arrVal[x];
+
+					arrKey[x] = arrKey[used];
+					arrVal[x] = arrVal[used];
+					arrKey[used] = _k;
+					arrVal[used] = _v;
+				}				
 				used++;
 				return;
 			}
@@ -37,8 +48,12 @@ public:
 		{
 			if (keys[i] == k)
 			{
-				used--;
-				keys[i] = KEY();
+				for (size_t x = i; i < used; i++)
+				{
+					arrKey[x] = arrKey[used - 1];
+					arrVal[x] = arrVal[used - 1];
+				}
+				arrKey[used--] = KEY();
 				break;
 			}
 		}
@@ -75,18 +90,17 @@ public:
 		if (newsized < used)
 			throw string("Need clear table");
 
-		KEY defval = KEY();//значение по умолчанию
+		KEY defval = KEY();
 		KEY* tmpk = new KEY[newsized];
 		VAL* tmpv = new VAL[newsized];
-		size_t insertindex = 0;
-		for (int i = 0; i < s; i++)
+		for (int i = 0; i < used; i++)
 		{
-			if (keys[i] != defval)
-			{
-				tmpk[insertindex] = keys[i];
-				tmpv[insertindex] = values[i];
-				++insertindex;
-			}
+			tmpk[i] = keys[i];
+			tmpv[i] = values[i];
+		}
+		for (int i = used; i < newsized; i++)
+		{
+			tmpk[i] = KEY();
 		}
 		delete[]keys;
 		delete[]values;
