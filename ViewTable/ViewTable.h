@@ -62,7 +62,7 @@ public:
 	{
 		try
 		{
-			return Search_Binary(0,s,k);
+			return values[Search_Binary(0,s,k)];
 		}catch(int e)
 		{}
 				
