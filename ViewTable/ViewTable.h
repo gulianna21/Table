@@ -44,27 +44,28 @@ public:
 
 	void remove(KEY k)
 	{
-		for (size_t i = 0; i < s; i++)
+		try
 		{
-			if (keys[i] == k)
+			int index = Search_Binary(0,s,k);
+			for (size_t x = index; i < used; i++)
 			{
-				for (size_t x = i; i < used; i++)
-				{
-					arrKey[x] = arrKey[used - 1];
-					arrVal[x] = arrVal[used - 1];
-				}
-				arrKey[used--] = KEY();
-				break;
+				arrKey[x] = arrKey[used - 1];
+				arrVal[x] = arrVal[used - 1];
 			}
-		}
+			arrKey[used--] = KEY();
+		}catch(int e)
+		{}
+
 	}
 
 	VAL& operator[](KEY k)
 	{
-		for (size_t i = 0; i < s; i++)
-			if (keys[i] == k)
-				return values[i];
-		
+		try
+		{
+			return Search_Binary(0,s,k);
+		}catch(int e)
+		{}
+				
 		throw string("Not found index");
 	}
 
@@ -81,6 +82,24 @@ public:
 		}
 
 		return *this;
+	}
+	int Search_Binary (int left, int right, int key)
+        {
+        	int midd = 0;
+		while (1)
+		{
+			midd = (left + right) / 2;
+		
+			if (key < keys[midd])       // если искомое меньше значения в ячейке
+				right = midd - 1;      // смещаем правую границу поиска
+			else if (key > keys[midd])  // если искомое больше значения в ячейке
+				left = midd + 1;	   // смещаем левую границу поиска
+			else                       // иначе (значения равны)
+				return midd;           // функция возвращает индекс ячейки
+ 
+			if (left > right)          // если границы сомкнулись 
+				throw 9;
+		}
 	}
 
 	void resize(size_t newsized)
